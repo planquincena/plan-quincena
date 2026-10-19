@@ -147,8 +147,8 @@
 
   <!-- CORREO -->
   <div class="card email" id="email">
-    <h2>¿Te aviso el próximo día de cobro?</h2>
-    <p>Te escribo el día que cobras para que hagas tu reparto antes de gastar. Y un correo corto a la semana. Te das de baja cuando quieras.</p>
+    <h2>¿Quieres que esta vez te dure hasta cobrar?</h2>
+    <p>Déjame tu correo. Durante unos días te escribo correos cortos: por qué el dinero se va los primeros días y qué hacer para que llegue al final. Te das de baja cuando quieras.</p>
     <form id="form" method="POST" action="https://7500c6dc.sibforms.com/serve/MUIFADtH-TnR7dYBew480T7Xuq4BNxxMjO-kHdtBzA9YLvo53Kpx31XINH-BzixD9uetmuCErSL5CEiWCxbq4SknXqV_GO1gVmS5XXHdyWHJuSkg_-AUYqaJRdDE6QHlFX5QllwRWJBHKmK7-Md8-gejB8tPq-5mjsy2MZycbLJoyGH12VLPJ4JZlf9QpKuK5MQn6TJ-GGmvT5msvA==" novalidate>
       <input type="email" id="correo" name="EMAIL" placeholder="Tu correo" autocomplete="email" required>
       <p class="q">¿Cuándo cobras?</p>
@@ -163,9 +163,9 @@
       <p class="ferr" id="ferr"></p>
       <input type="text" name="email_address_check" value="" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <input type="hidden" name="locale" value="es">
-      <button class="go" type="submit" id="enviar">Avísame el día que cobro</button>
+      <button class="go" type="submit" id="enviar">Quiero recibirlos</button>
     </form>
-    <p class="thanks" id="gracias">¡Hecho! Te escribo el día que cobras.</p>
+    <p class="thanks" id="gracias">¡Listo! Revisa tu correo en unos minutos.<br><span style="font-weight:600;color:var(--soft);font-size:14px">Si no lo ves, busca en Promociones o en Spam.</span></p>
   </div>
 
   <footer>
@@ -273,7 +273,7 @@
       f.style.display = 'none';
       document.getElementById('gracias').style.display = 'block';
     } catch {
-      btn.disabled = false; btn.textContent = 'Avísame el día que cobro';
+      btn.disabled = false; btn.textContent = 'Quiero recibirlos';
       ferr.textContent = 'No se ha podido enviar. Revisa tu conexión y prueba otra vez.'; ferr.style.display = 'block';
     }
   });
