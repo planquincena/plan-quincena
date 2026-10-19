@@ -59,6 +59,16 @@
   .email.show{display:block}
   .email p{color:var(--soft);font-size:15px;margin-bottom:14px;line-height:1.4}
   .email input{width:100%;font:inherit;font-size:17px;padding:14px 16px;border:2px solid var(--line);border-radius:14px;margin-bottom:12px;outline:none}
+  .email .q{font-weight:800;font-size:15px;margin:4px 0 8px;color:var(--ink)}
+  .opts{display:grid;gap:8px;margin-bottom:14px}
+  .opts label{display:flex;align-items:center;gap:10px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;font-size:16px;cursor:pointer}
+  .opts input{width:20px;height:20px;margin:0;accent-color:var(--accent)}
+  .opts label:has(input:checked){border-color:var(--accent);background:#eef6f1}
+  .optin{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--soft);line-height:1.4;margin:4px 0 14px;cursor:pointer}
+  .optin input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--accent)}
+  .optin a{color:var(--accent)}
+  .ferr{display:none;color:#b84a3a;font-size:14px;font-weight:700;margin:-4px 0 12px}
+  .hp{position:absolute;left:-9999px}
   .thanks{display:none;color:var(--accent);font-weight:700;text-align:center;margin-top:8px}
   footer{text-align:center;color:var(--soft);font-size:12px;line-height:1.5;margin-top:20px}
 </style>
@@ -138,19 +148,29 @@
   <!-- CORREO -->
   <div class="card email" id="email">
     <h2>¿Te aviso el próximo día de cobro?</h2>
-    <p>Te mando gratis la <strong>Hoja del domingo</strong>: 15 minutos a la semana para comprobar que vas bien. Y un correo corto cada semana.</p>
-    <!-- PROTOTIPO: este formulario no envía nada todavía.
-         Hay que sustituirlo por el formulario de tu servicio de correo. -->
-    <form id="form">
-      <input type="email" id="correo" placeholder="Tu correo" required>
-      <button class="go" type="submit">Quiero la Hoja del domingo</button>
+    <p>Te escribo el día que cobras para que hagas tu reparto antes de gastar. Y un correo corto a la semana. Te das de baja cuando quieras.</p>
+    <form id="form" method="POST" action="https://7500c6dc.sibforms.com/serve/MUIFADtH-TnR7dYBew480T7Xuq4BNxxMjO-kHdtBzA9YLvo53Kpx31XINH-BzixD9uetmuCErSL5CEiWCxbq4SknXqV_GO1gVmS5XXHdyWHJuSkg_-AUYqaJRdDE6QHlFX5QllwRWJBHKmK7-Md8-gejB8tPq-5mjsy2MZycbLJoyGH12VLPJ4JZlf9QpKuK5MQn6TJ-GGmvT5msvA==" novalidate>
+      <input type="email" id="correo" name="EMAIL" placeholder="Tu correo" autocomplete="email" required>
+      <p class="q">¿Cuándo cobras?</p>
+      <div class="opts">
+        <label><input type="radio" name="CUANDO_COBRA" value="1"> Días 15 y 30</label>
+        <label><input type="radio" name="CUANDO_COBRA" value="2"> Final de mes</label>
+        <label><input type="radio" name="CUANDO_COBRA" value="3"> Días 1 y 15</label>
+        <label><input type="radio" name="CUANDO_COBRA" value="4"> Cada viernes o cada dos viernes</label>
+        <label><input type="radio" name="CUANDO_COBRA" value="5"> Es irregular</label>
+      </div>
+      <label class="optin"><input type="checkbox" name="OPT_IN" value="1" id="optin"> <span>Acepto recibir tus correos y he leído la <a href="privacidad.html" target="_blank">política de privacidad y aviso legal</a>.</span></label>
+      <p class="ferr" id="ferr"></p>
+      <input type="text" name="email_address_check" value="" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="hidden" name="locale" value="es">
+      <button class="go" type="submit" id="enviar">Avísame el día que cobro</button>
     </form>
-    <p class="thanks" id="gracias">¡Hecho! Revisa tu correo en unos minutos.</p>
+    <p class="thanks" id="gracias">¡Hecho! Te escribo el día que cobras.</p>
   </div>
 
   <footer>
     Herramienta orientativa. No es asesoría financiera.<br>
-    Los datos que escribes no se guardan ni se envían a ningún sitio.
+    Las cantidades que escribes no se guardan ni se envían a ningún sitio.<br>Tu correo solo se usa para escribirte. <a href="privacidad.html" style="color:inherit">Privacidad</a>
   </footer>
 </div>
 
@@ -236,10 +256,26 @@
     res.scrollIntoView({behavior: 'smooth', block: 'start'});
   });
 
-  document.getElementById('form').addEventListener('submit', e => {
+  // Envío a Brevo: se manda en segundo plano y se muestra el gracias aquí mismo.
+  document.getElementById('form').addEventListener('submit', async e => {
     e.preventDefault();
-    document.getElementById('form').style.display = 'none';
-    document.getElementById('gracias').style.display = 'block';
+    const f = e.target, ferr = document.getElementById('ferr'), btn = document.getElementById('enviar');
+    const mail = f.EMAIL.value.trim();
+    let fallo = '';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) fallo = 'Revisa tu correo: falta algo.';
+    else if (!f.querySelector('input[name=CUANDO_COBRA]:checked')) fallo = 'Elige cuándo cobras.';
+    else if (!f.OPT_IN.checked) fallo = 'Marca la casilla para poder escribirte.';
+    if (fallo){ ferr.textContent = fallo; ferr.style.display = 'block'; return; }
+    ferr.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      await fetch(f.action, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(new FormData(f)) });
+      f.style.display = 'none';
+      document.getElementById('gracias').style.display = 'block';
+    } catch {
+      btn.disabled = false; btn.textContent = 'Avísame el día que cobro';
+      ferr.textContent = 'No se ha podido enviar. Revisa tu conexión y prueba otra vez.'; ferr.style.display = 'block';
+    }
   });
 </script>
 </body>
