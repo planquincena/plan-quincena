@@ -52,9 +52,9 @@
       <p class="small">Gratis. Sin registro. Menos de 2 minutos.</p>
     </div>
     <div class="pig" aria-hidden="true">
-      <video id="cerdito" muted playsinline preload="auto">
-        <source src="cerdito.webm" type="video/webm">
+      <video id="cerdito" muted playsinline autoplay loop preload="auto" poster="cerdito.jpg">
         <source src="cerdito.mp4" type="video/mp4">
+        <source src="cerdito.webm" type="video/webm">
       </video>
     </div>
   </section>
@@ -81,6 +81,7 @@
 
   (() => {
     const video = document.getElementById('cerdito');
+    if (!window.matchMedia('(max-width: 760px)').matches) { video.removeAttribute('autoplay'); video.pause(); }
     const mobile = window.matchMedia('(max-width: 760px)');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     let pointer = null, desired = FRONT_TIME, raf = 0;
@@ -124,6 +125,9 @@
     window.addEventListener('resize', update);
     window.addEventListener('scroll', update, {passive: true});
     if (video.readyState >= 2) ready();
+    // En el móvil (sobre todo iPhone) el vídeo no carga hasta que se le pide reproducir:
+    // se lanza ya, sin esperar a "loadeddata". Si no se puede, queda la imagen fija (poster).
+    if (mobile.matches && !reduced.matches) video.play().catch(() => {});
   })();
 </script>
 </body>
