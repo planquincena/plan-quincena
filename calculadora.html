@@ -69,7 +69,7 @@
   .optin a{color:var(--accent)}
   .ferr{display:none;color:#b84a3a;font-size:14px;font-weight:700;margin:-4px 0 12px}
   .hp{position:absolute;left:-9999px}
-  .thanks{display:none;color:var(--accent);font-weight:700;text-align:center;margin-top:8px}
+  .email .thanks{display:none;font-size:24px;line-height:1.3;padding:8px 0;color:var(--accent);font-weight:700;text-align:center;margin-top:8px}
   footer{text-align:center;color:var(--soft);font-size:12px;line-height:1.5;margin-top:20px}
 </style>
 </head>
@@ -147,8 +147,6 @@
 
   <!-- CORREO -->
   <div class="card email" id="email">
-    <h2>¿Quieres que esta vez te dure hasta cobrar?</h2>
-    <p>Déjame tu correo. Durante unos días te escribo correos cortos: por qué el dinero se va los primeros días y qué hacer para que llegue al final. Te das de baja cuando quieras.</p>
     <form id="form" method="POST" action="https://7500c6dc.sibforms.com/serve/MUIFADtH-TnR7dYBew480T7Xuq4BNxxMjO-kHdtBzA9YLvo53Kpx31XINH-BzixD9uetmuCErSL5CEiWCxbq4SknXqV_GO1gVmS5XXHdyWHJuSkg_-AUYqaJRdDE6QHlFX5QllwRWJBHKmK7-Md8-gejB8tPq-5mjsy2MZycbLJoyGH12VLPJ4JZlf9QpKuK5MQn6TJ-GGmvT5msvA==" novalidate>
       <input type="email" id="correo" name="EMAIL" placeholder="Tu correo" autocomplete="email" required>
       <p class="q">¿Cuándo cobras?</p>
@@ -165,7 +163,7 @@
       <input type="hidden" name="locale" value="es">
       <button class="go" type="submit" id="enviar">Quiero recibirlos</button>
     </form>
-    <p class="thanks" id="gracias">¡Listo! Revisa tu correo en unos minutos.<br><span style="font-weight:600;color:var(--soft);font-size:14px">Si no lo ves, busca en Promociones o en Spam.</span></p>
+    <p class="thanks" id="gracias">¡Listo! Revisa tu correo en unos minutos.<span style="display:block;margin-top:8px;font-weight:700;color:var(--soft);font-size:18px">Si no lo ves, busca en Promociones o en Spam.</span></p>
   </div>
 
   <footer>
