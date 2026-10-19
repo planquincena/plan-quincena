@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Quincena · Hoy cobras</title>
+<meta name="description" content="Hoy cobras. Haz tu reparto antes de gastar y mira con cuánto te quedas de verdad.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3eae2;          /* mismo crema que el fondo del vídeo */
+    --ink:#2b2622; --soft:#6b625a;
+    --accent:#2f7d5b; --accent-dark:#246349;
+    --badge:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+
+  .hero{min-height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:4vw;padding:6vw 8vw}
+  .tag{display:inline-flex;align-items:center;height:34px;padding:0 14px;border-radius:100px;background:var(--badge);font-size:15px;font-weight:600;color:var(--accent)}
+  h1{margin-top:22px;font-size:clamp(34px,4.2vw,60px);line-height:1.05;font-weight:900;letter-spacing:-.02em}
+  h1 span{color:var(--accent)}
+  .lead{margin-top:20px;font-size:clamp(17px,1.35vw,20px);line-height:1.5;color:var(--soft);max-width:30ch}
+  .cta{display:inline-flex;align-items:center;justify-content:center;min-height:56px;margin-top:32px;padding:0 30px;border-radius:16px;background:var(--accent);color:#fff;font-weight:800;font-size:18px;text-decoration:none}
+  .cta:hover{background:var(--accent-dark)}
+  .cta:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+  .small{margin-top:14px;font-size:14px;color:var(--soft)}
+
+  .pig{position:relative;width:100%;max-width:560px;justify-self:center;aspect-ratio:1/1;pointer-events:none}
+  .pig video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+  /* Bordes del vídeo fundidos con el fondo para que no se vea el recuadro */
+  .pig{-webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%)}
+  .pig video{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 10%,#000 92%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 10%,#000 92%,transparent 100%)}
+
+  @media(max-width:760px){
+    .hero{grid-template-columns:1fr;gap:8px;padding:40px 24px 0;min-height:100svh;align-content:start}
+    .lead{max-width:none}
+    .pig{max-width:420px;margin:0 auto}
+  }
+</style>
+</head>
+<body>
+<main>
+  <section class="hero" aria-labelledby="titulo">
+    <div>
+      <span class="tag">Plan Quincena</span>
+      <h1 id="titulo">Hoy cobras.<br><span>¿Con cuánto te quedas?</span></h1>
+      <p class="lead">Haz tu reparto antes de gastar nada. Pon lo que cobras y lo que tienes que pagar, y te digo cuánto puedes gastar al día hasta el próximo cobro.</p>
+      <a class="cta" href="calculadora.html">Hacer mi reparto</a>
+      <p class="small">Gratis. Sin registro. Menos de 2 minutos.</p>
+    </div>
+    <div class="pig" aria-hidden="true">
+      <video id="cerdito" muted playsinline preload="auto">
+        <source src="cerdito.webm" type="video/webm">
+        <source src="cerdito.mp4" type="video/mp4">
+      </video>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Tabla calibrada a partir del vídeo: [ángulo de la mirada en radianes, segundo del vídeo].
+  // Ángulo 0 = derecha, π/2 = abajo, π = izquierda, 3π/2 = arriba.
+  const GAZE = [[0.861,1.20833],[0.883,1.25],[0.905,1.29167],[0.932,1.33333],[0.946,1.375],[0.962,1.41667],[0.976,1.45833],[0.989,1.5],[1.006,1.54167],[1.016,1.58333],[1.026,1.625],[1.03,1.66667],[1.03,1.70833],[1.03,1.75],[1.03,1.79167],[1.036,1.91667],[1.037,1.875],[1.037,2.08333],[1.038,1.83333],[1.038,1.95833],[1.038,2.04167],[1.039,2.0],[1.039,2.125],[1.044,2.16667],[1.064,2.20833],[1.091,2.25],[1.115,2.29167],[1.13,2.33333],[1.155,2.375],[1.201,2.41667],[1.236,2.45833],[1.266,2.5],[1.312,2.54167],[1.354,2.58333],[1.388,2.625],[1.426,2.66667],[1.461,2.70833],[1.491,2.75],[1.523,2.79167],[1.546,2.83333],[1.55,2.875],[1.56,2.91667],[1.56,3.125],[1.562,2.95833],[1.562,3.08333],[1.562,3.16667],[1.562,3.20833],[1.562,3.25],[1.566,3.04167],[1.568,3.0],[1.573,3.29167],[1.588,3.33333],[1.607,3.375],[1.621,3.41667],[1.655,3.45833],[1.682,3.5],[1.713,3.54167],[1.746,3.58333],[1.792,3.625],[1.822,3.66667],[1.856,3.70833],[1.9,3.75],[1.941,3.79167],[1.975,3.83333],[2.008,3.875],[2.039,3.91667],[2.072,3.95833],[2.095,4.0],[2.126,4.04167],[2.152,4.08333],[2.184,4.125],[2.193,4.16667],[2.215,4.20833],[2.222,4.25],[2.238,4.29167],[2.241,4.45833],[2.242,4.5],[2.242,4.54167],[2.243,4.33333],[2.243,4.375],[2.243,4.41667],[2.244,4.58333],[2.247,4.625],[2.261,4.66667],[2.268,4.70833],[2.287,4.75],[2.318,4.79167],[2.347,4.83333],[2.396,4.875],[2.429,4.91667],[2.467,4.95833],[2.52,5.0],[2.553,5.04167],[2.61,5.08333],[2.648,5.125],[2.71,5.16667],[2.759,5.20833],[2.804,5.25],[2.856,5.29167],[2.924,5.33333],[2.996,5.375],[3.039,5.41667],[3.09,5.45833],[3.166,5.5],[3.219,5.54167],[3.263,5.58333],[3.315,5.625],[3.367,5.66667],[3.425,5.70833],[3.483,5.75],[3.532,5.79167],[3.585,5.83333],[3.637,5.875],[3.686,5.91667],[3.736,5.95833],[3.78,6.0],[3.809,6.04167],[3.85,6.08333],[3.882,6.125],[3.922,6.16667],[3.962,6.20833],[4.006,6.25],[4.043,6.29167],[4.08,6.33333],[4.113,6.375],[4.149,6.41667],[4.191,6.45833],[4.241,6.5],[4.276,6.54167],[4.323,6.58333],[4.35,6.625],[4.388,6.66667],[4.421,6.70833],[4.449,6.75],[4.492,6.79167],[4.527,6.83333],[4.56,6.875],[4.62,6.91667],[4.648,6.95833],[4.697,7.0],[4.729,7.04167],[4.775,7.08333],[4.814,7.125],[4.86,7.16667],[4.905,7.20833],[4.943,7.25],[4.978,7.29167],[5.021,7.33333],[5.052,7.375],[5.102,7.41667],[5.148,7.45833],[5.221,7.5],[5.233,7.54167],[5.298,7.58333],[5.34,7.625],[5.375,7.66667],[5.42,7.70833],[5.467,7.75],[5.513,7.79167],[5.572,7.83333],[5.625,7.875],[5.672,7.91667],[5.717,7.95833]];
+  const SRC_W = 640, SRC_H = 360;          // tamaño del vídeo original
+  const EYE_X = 318.8, EYE_Y = 133;        // punto medio entre los ojos, en el vídeo
+  const FRONT_TIME = 0;                    // fotograma 0: mira al frente
+  const TAU = Math.PI * 2;
+
+  function timeForAngle(angle){
+    const target = (angle % TAU + TAU) % TAU;
+    let best = GAZE[0][1], dist = Infinity;
+    for (const [a, t] of GAZE){
+      const d = Math.abs(target - a), circ = Math.min(d, TAU - d);
+      if (circ < dist){ dist = circ; best = t; }
+    }
+    return best + 1/96;
+  }
+
+  (() => {
+    const video = document.getElementById('cerdito');
+    const mobile = window.matchMedia('(max-width: 760px)');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let pointer = null, desired = FRONT_TIME, raf = 0;
+
+    const seek = () => {
+      raf = 0;
+      if (mobile.matches || video.readyState < 2 || video.seeking) return;
+      if (Math.abs(video.currentTime - desired) > 1/48){
+        video.currentTime = Math.min(desired, video.duration - 1/24);
+      }
+    };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(seek); };
+
+    const update = () => {
+      if (mobile.matches || !pointer) return;
+      const r = video.getBoundingClientRect();
+      const s = Math.max(r.width / SRC_W, r.height / SRC_H);
+      const ex = r.left + r.width / 2 + (EYE_X - SRC_W / 2) * s;
+      const ey = r.top + r.height / 2 + (EYE_Y - SRC_H / 2) * s;
+      const dx = pointer.x - ex, dy = pointer.y - ey;
+      // Si el cursor está sobre la cara, mira al frente
+      desired = Math.hypot(dx, dy) < 40 * s ? FRONT_TIME : timeForAngle(Math.atan2(dy, dx));
+      schedule();
+    };
+
+    const ready = () => {
+      video.loop = mobile.matches;
+      if (mobile.matches && !reduced.matches){
+        video.play().catch(() => {});
+      } else {
+        video.pause();
+        if (!mobile.matches){ update(); schedule(); }
+      }
+    };
+
+    video.addEventListener('seeked', schedule);
+    video.addEventListener('loadeddata', ready);
+    mobile.addEventListener('change', ready);
+    reduced.addEventListener('change', ready);
+    window.addEventListener('pointermove', e => { pointer = {x: e.clientX, y: e.clientY}; update(); }, {passive: true});
+    window.addEventListener('resize', update);
+    window.addEventListener('scroll', update, {passive: true});
+    if (video.readyState >= 2) ready();
+  })();
+</script>
+</body>
+</html>

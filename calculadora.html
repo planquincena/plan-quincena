@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Quincena · ¿Con cuánto te quedas?</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f1ea; --card:#ffffff; --ink:#2b2622; --soft:#7a7068;
+    --accent:#2f7d5b; --accent-soft:#e3f1ea; --warn:#c98a1b; --warn-soft:#fbf0dc;
+    --bad:#b84a3a; --bad-soft:#f8e3df; --line:#e6ddd2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding:24px 16px 48px}
+  .wrap{max-width:440px;margin:0 auto}
+  header{text-align:center;margin-bottom:20px}
+  .logo{font-weight:800;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:26px;font-weight:800;line-height:1.2;margin-top:8px}
+  .sub{color:var(--soft);font-size:15px;margin-top:6px}
+  .card{background:var(--card);border-radius:20px;padding:22px;box-shadow:0 2px 14px rgba(60,40,20,.06);margin-bottom:16px}
+  .step{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+  h2{font-size:19px;font-weight:800;margin-bottom:4px}
+  .intro{color:var(--soft);font-size:14px;margin-bottom:16px;line-height:1.4}
+  .row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .row:last-of-type{border-bottom:none}
+  .row label{flex:1;font-weight:600;font-size:15px}
+  .row .name{flex:1;font:inherit;font-weight:600;font-size:15px;border:none;border-bottom:1px dashed var(--line);background:transparent;padding:4px 0;outline:none;color:var(--ink);min-width:0}
+  .row input.amt{width:110px;font:inherit;font-size:17px;text-align:right;padding:10px 12px;border:2px solid var(--line);border-radius:12px;background:#fffdfa;color:var(--ink);outline:none}
+  .row input.amt:focus{border-color:var(--accent)}
+  .row.main input.amt{width:140px;font-size:22px;font-weight:800}
+  .del{background:none;border:none;color:var(--soft);font-size:20px;cursor:pointer;width:24px;padding:0}
+  .add{margin-top:12px;background:none;border:2px dashed var(--line);color:var(--soft);font:inherit;font-weight:700;font-size:15px;padding:10px 14px;border-radius:12px;cursor:pointer;width:100%}
+  .add:hover{border-color:var(--accent);color:var(--accent)}
+  .total{display:flex;justify-content:space-between;margin-top:14px;padding:12px 14px;background:var(--bg);border-radius:12px;font-weight:800;font-size:16px}
+  .note{font-size:13px;color:var(--soft);margin-top:10px;line-height:1.4}
+  input[type=date]{width:100%;font:inherit;font-size:18px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:#fffdfa;color:var(--ink);outline:none}
+  .go{width:100%;font:inherit;font-weight:800;font-size:17px;padding:16px;border:none;border-radius:14px;background:var(--accent);color:#fff;cursor:pointer}
+  .go:active{transform:scale(.99)}
+  .error{display:none;background:var(--bad-soft);color:var(--bad);font-weight:700;font-size:15px;padding:12px 14px;border-radius:12px;margin-bottom:12px;text-align:center}
+  .result{display:none;text-align:center;margin-top:16px}
+  .result.show{display:block}
+  .tag{display:inline-block;font-size:13px;font-weight:800;padding:6px 12px;border-radius:999px;margin-bottom:12px}
+  .label-sm{color:var(--soft);font-size:15px;font-weight:700}
+  .left{font-size:40px;font-weight:800;line-height:1.1;margin:2px 0 14px}
+  .grid{display:flex;gap:10px}
+  .box{flex:1;background:var(--bg);border-radius:14px;padding:14px 8px}
+  .box .n{font-size:34px;font-weight:800;line-height:1}
+  .box .t{font-size:13px;color:var(--soft);margin-top:4px;font-weight:700}
+  .math{margin:16px 0 0;text-align:left;background:var(--bg);border-radius:12px;padding:12px 14px;font-size:15px}
+  .math div{display:flex;justify-content:space-between;padding:3px 0}
+  .math .eq{border-top:1px solid var(--line);margin-top:4px;padding-top:7px;font-weight:800}
+  .msg{font-size:16px;margin-top:16px;line-height:1.45}
+  .ok .tag{background:var(--accent-soft);color:var(--accent)} .ok .left,.ok .box .n{color:var(--accent)}
+  .tight .tag{background:var(--warn-soft);color:var(--warn)} .tight .left,.tight .box .n{color:var(--warn)}
+  .neg .tag{background:var(--bad-soft);color:var(--bad)} .neg .left{color:var(--bad)}
+  .neg .grid{display:none}
+  .email{display:none}
+  .email.show{display:block}
+  .email p{color:var(--soft);font-size:15px;margin-bottom:14px;line-height:1.4}
+  .email input{width:100%;font:inherit;font-size:17px;padding:14px 16px;border:2px solid var(--line);border-radius:14px;margin-bottom:12px;outline:none}
+  .thanks{display:none;color:var(--accent);font-weight:700;text-align:center;margin-top:8px}
+  footer{text-align:center;color:var(--soft);font-size:12px;line-height:1.5;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Plan Quincena</div>
+    <h1>Hoy cobras. ¿Con cuánto te quedas de verdad?</h1>
+    <p class="sub">Haz el reparto antes de gastar nada. Tarda menos de dos minutos.</p>
+  </header>
+
+  <!-- PASO 1: lo que cobras -->
+  <div class="card">
+    <div class="step">Paso 1</div>
+    <h2>Lo que cobras</h2>
+    <p class="intro">Lo que entra hoy en tu cuenta o en tu mano.</p>
+    <div id="cobras">
+      <div class="row main"><label>Sueldo</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Extras, propinas, horas</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Ayudas u otros ingresos</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Lo que te quedaba de antes</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+    </div>
+    <div class="total"><span>Total que entra</span><span id="totCobras">0</span></div>
+  </div>
+
+  <!-- PASO 2: pagos -->
+  <div class="card">
+    <div class="step">Paso 2</div>
+    <h2>Lo que pagas o apartas hoy</h2>
+    <p class="intro">Todo lo que hay que pagar hasta tu próximo cobro. Aunque venza más tarde, apártalo hoy: así no te lo gastas.</p>
+    <div id="pagos">
+      <div class="row"><label>Alquiler o hipoteca</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Luz, agua, gas</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Teléfono e internet</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Préstamos, tarjeta, cuotas</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Colegio, guardería, actividades</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Transporte (abono, gasolina)</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Ayuda a la familia o envíos</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Seguros y suscripciones</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+      <div class="row"><label>Apartado para imprevistos</label><input class="amt" type="number" inputmode="decimal" placeholder="0"></div>
+    </div>
+    <button class="add" id="addPago" type="button">+ Añadir otro pago</button>
+    <div class="total"><span>Total que pagas o apartas</span><span id="totPagos">0</span></div>
+    <p class="note">La comida y los gastos del día a día no van aquí: salen de lo que te queda.</p>
+  </div>
+
+  <!-- PASO 3: fecha -->
+  <div class="card">
+    <div class="step">Paso 3</div>
+    <h2>¿Cuándo vuelves a cobrar?</h2>
+    <p class="intro">Si cobras por quincena, pon la fecha del próximo cobro.</p>
+    <input id="cobro" type="date">
+  </div>
+
+  <p class="error" id="error"></p>
+  <button class="go" id="calcular">Ver con cuánto me quedo</button>
+
+  <!-- RESULTADO -->
+  <div class="card result" id="resultado">
+    <span class="tag" id="tag"></span>
+    <div class="label-sm">Te quedan para vivir</div>
+    <div class="left" id="queda"></div>
+    <div class="grid">
+      <div class="box"><div class="n" id="dia"></div><div class="t">al día</div></div>
+      <div class="box"><div class="n" id="semana"></div><div class="t">a la semana</div></div>
+    </div>
+    <div class="math">
+      <div><span>Entra</span><span id="mEntra"></span></div>
+      <div><span>− Pagas o apartas</span><span id="mPagos"></span></div>
+      <div class="eq"><span>= Te queda</span><span id="mQueda"></span></div>
+      <div><span>÷ Días hasta el próximo cobro</span><span id="mDias"></span></div>
+    </div>
+    <p class="msg" id="msg"></p>
+  </div>
+
+  <!-- CORREO -->
+  <div class="card email" id="email">
+    <h2>¿Te aviso el próximo día de cobro?</h2>
+    <p>Te mando gratis la <strong>Hoja del domingo</strong>: 15 minutos a la semana para comprobar que vas bien. Y un correo corto cada semana.</p>
+    <!-- PROTOTIPO: este formulario no envía nada todavía.
+         Hay que sustituirlo por el formulario de tu servicio de correo. -->
+    <form id="form">
+      <input type="email" id="correo" placeholder="Tu correo" required>
+      <button class="go" type="submit">Quiero la Hoja del domingo</button>
+    </form>
+    <p class="thanks" id="gracias">¡Hecho! Revisa tu correo en unos minutos.</p>
+  </div>
+
+  <footer>
+    Herramienta orientativa. No es asesoría financiera.<br>
+    Los datos que escribes no se guardan ni se envían a ningún sitio.
+  </footer>
+</div>
+
+<script>
+  const fmt = n => Math.round(n).toLocaleString('es');
+
+  // Fecha del próximo cobro: por defecto, dentro de 15 días
+  (() => {
+    const d = new Date(); d.setDate(d.getDate() + 15);
+    const p = n => String(n).padStart(2, '0');
+    document.getElementById('cobro').value = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  })();
+  const sum = id => [...document.querySelectorAll('#' + id + ' input.amt')]
+    .reduce((t, i) => t + (parseFloat(i.value) || 0), 0);
+
+  function refresh(){
+    document.getElementById('totCobras').textContent = fmt(sum('cobras'));
+    document.getElementById('totPagos').textContent = fmt(sum('pagos'));
+  }
+  document.addEventListener('input', refresh);
+
+  document.getElementById('addPago').addEventListener('click', () => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = '<input class="name" type="text" placeholder="¿Qué pago?">' +
+      '<input class="amt" type="number" inputmode="decimal" placeholder="0">' +
+      '<button class="del" type="button" aria-label="Quitar">×</button>';
+    row.querySelector('.del').addEventListener('click', () => { row.remove(); refresh(); });
+    document.getElementById('pagos').appendChild(row);
+    row.querySelector('.name').focus();
+  });
+
+  document.getElementById('calcular').addEventListener('click', () => {
+    const entra = sum('cobras');
+    const pagos = sum('pagos');
+    const cobroVal = document.getElementById('cobro').value;
+    const err = document.getElementById('error');
+    if (entra === 0 || !cobroVal) {
+      err.textContent = entra === 0 ? 'Escribe cuánto cobras en el Paso 1.' : 'Elige la fecha de tu próximo cobro en el Paso 3.';
+      err.style.display = 'block';
+      err.scrollIntoView({behavior: 'smooth', block: 'center'});
+      return;
+    }
+    err.style.display = 'none';
+
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const cobro = new Date(cobroVal + 'T00:00:00');
+    let dias = Math.round((cobro - hoy) / 86400000);
+    if (dias < 1) dias = 1;
+
+    const queda = entra - pagos;
+    const porDia = queda / dias;
+
+    document.getElementById('mEntra').textContent = fmt(entra);
+    document.getElementById('mPagos').textContent = fmt(pagos);
+    document.getElementById('mQueda').textContent = fmt(queda);
+    document.getElementById('mDias').textContent = dias;
+
+    const res = document.getElementById('resultado');
+    res.className = 'card result show';
+    const tag = document.getElementById('tag');
+    const msg = document.getElementById('msg');
+
+    document.getElementById('queda').textContent = fmt(Math.max(queda, 0));
+    document.getElementById('dia').textContent = fmt(Math.max(porDia, 0));
+    document.getElementById('semana').textContent = fmt(Math.max(porDia * 7, 0));
+
+    if (queda < 0) {
+      res.classList.add('neg');
+      tag.textContent = 'Te faltan ' + fmt(Math.abs(queda));
+      msg.textContent = `Lo que cobras no cubre los pagos. No es un fallo tuyo: es información. Saber que te faltan ${fmt(Math.abs(queda))} te ayuda a pedir, aplazar o buscar ayuda con una cifra concreta.`;
+    } else if (porDia < 10) {
+      res.classList.add('tight');
+      tag.textContent = 'Vas justa';
+      msg.textContent = 'Es poco, pero ahora sabes cuánto es. Haz la compra con lista y deja lo que pueda esperar para el próximo cobro. Lo que no gastes un día pasa al siguiente.';
+    } else {
+      res.classList.add('ok');
+      tag.textContent = 'Vas bien';
+      msg.textContent = 'Si te mantienes en tu número del día, llegas al próximo cobro. Lo que no gastes un día pasa al siguiente.';
+    }
+
+    document.getElementById('email').classList.add('show');
+    res.scrollIntoView({behavior: 'smooth', block: 'start'});
+  });
+
+  document.getElementById('form').addEventListener('submit', e => {
+    e.preventDefault();
+    document.getElementById('form').style.display = 'none';
+    document.getElementById('gracias').style.display = 'block';
+  });
+</script>
+</body>
+</html>
